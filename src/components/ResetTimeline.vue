@@ -17,6 +17,17 @@ const { withToken } = useToken();
 const typeFilter = ref<'all' | ResetType>('all');
 const visibleCount = ref(15);
 
+// Expanded tweet text IDs
+const expandedIds = ref<Set<string>>(new Set());
+
+function toggleExpand(id: string) {
+  if (expandedIds.value.has(id)) {
+    expandedIds.value.delete(id);
+  } else {
+    expandedIds.value.add(id);
+  }
+}
+
 // H5 Vant Date Picker State (https://vant-ui.github.io/vant/#/zh-CN/date-picker)
 const showH5DatePicker = ref(false);
 const h5SelectedDate = ref<string[]>([
@@ -176,15 +187,25 @@ function formatAbsolute(dateStr: string) {
     <!-- Timeline List -->
     <ul v-if="displayedResets.length > 0" class="timeline-list">
       <li v-for="item in displayedResets" :key="item.id" class="timeline-item">
-        <img
-          src="/thsottiaux-avatar.jpg"
-          alt="@thsottiaux"
-          class="item-avatar"
-          width="44"
-          height="44"
-          loading="lazy"
-        />
+        <!-- Avatar with hover effect and link to X -->
+        <a
+          :href="withToken('https://x.com/thsottiaux')"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="item-avatar-link"
+          title="访问 @thsottiaux 主页"
+        >
+          <img
+            src="/thsottiaux-avatar.jpg"
+            alt="@thsottiaux"
+            class="item-avatar"
+            width="44"
+            height="44"
+            loading="lazy"
+          />
+        </a>
 
+        <!-- Tweet Bubble -->
         <div class="item-bubble">
           <div class="item-meta">
             <span class="item-time-pill">{{ formatRelative(item.announced_at) }}</span>
@@ -194,9 +215,22 @@ function formatAbsolute(dateStr: string) {
             </span>
           </div>
 
-          <p class="item-text">
-            {{ item.text }}
-          </p>
+          <!-- 2-line clamp with expand toggle -->
+          <div class="item-text-wrapper">
+            <p
+              class="item-text"
+              :class="{ 'clamp-2': !expandedIds.has(item.id) }"
+            >
+              {{ item.text }}
+            </p>
+            <button
+              v-if="item.text.length > 75 || item.text.includes('\n')"
+              class="toggle-more-btn"
+              @click="toggleExpand(item.id)"
+            >
+              {{ expandedIds.has(item.id) ? '收起全文 ▲' : '展开更多 ▼' }}
+            </button>
+          </div>
 
           <a
             v-if="item.source?.url"

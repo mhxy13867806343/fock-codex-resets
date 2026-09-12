@@ -72,6 +72,14 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
+  transition: transform 0.15s ease;
+}
+
+.item-avatar-link {
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
+  text-decoration: none;
 }
 
 .item-avatar {
@@ -82,6 +90,24 @@
   border-radius: 50%;
   flex-shrink: 0;
   background: var(--sun);
+  display: block;
+  cursor: pointer;
+  transform: rotate(-3deg);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+}
+
+/* Hover effects for the avatar */
+.item-avatar:hover {
+  transform: rotate(7deg) scale(1.16);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.timeline-item:hover .item-avatar {
+  transform: rotate(5deg) scale(1.08);
+}
+
+.timeline-item:hover .item-avatar:hover {
+  transform: rotate(-8deg) scale(1.2);
 }
 
 .item-bubble {
@@ -93,6 +119,12 @@
   border-radius: 16px;
   padding: 16px 20px;
   position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.timeline-item:hover .item-bubble {
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: translateY(-1px);
 }
 
 .item-bubble:before {
@@ -132,11 +164,45 @@
   color: var(--ink-3);
 }
 
+/* 2-line clamp with ellipsis */
+.item-text-wrapper {
+  margin-top: 4px;
+}
+
 .item-text {
   margin: 0;
   font-size: 15px;
   line-height: 1.5;
   word-break: break-word;
+  white-space: pre-line;
+}
+
+.item-text.clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toggle-more-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.toggle-more-btn:hover {
+  color: var(--accent-hover);
 }
 
 .item-link {
