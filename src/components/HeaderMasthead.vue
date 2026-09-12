@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { showToast } from 'vant';
+
 const props = defineProps<{
   themeMode: 'auto' | 'light' | 'dark';
 }>();
@@ -9,6 +11,8 @@ const emit = defineEmits<{
 }>();
 
 const { withToken, currentToken, setCustomToken, resetRandomToken } = useToken();
+const { isDark, setTheme } = useTheme();
+const { isMobile } = useDevice();
 const editingToken = ref(currentToken.value);
 const message = useMessage();
 
@@ -25,20 +29,66 @@ function randomize() {
   message?.info(`已生成随机 Token: ${rand}`);
 }
 
-function cycleTheme() {
-  if (props.themeMode === 'auto') {
-    emit('update:themeMode', 'light');
-  } else if (props.themeMode === 'light') {
-    emit('update:themeMode', 'dark');
-  } else {
-    emit('update:themeMode', 'auto');
-  }
+// PC 端：Naive UI 下拉菜单 (n-dropdown) 选项
+const pcThemeOptions = computed(() => [
+  {
+    label: `💻 跟随系统外观 ${props.themeMode === 'auto' ? '✓' : ''}`,
+    key: 'auto',
+  },
+  {
+    label: `☀️ 浅色复古模式 ${props.themeMode === 'light' ? '✓' : ''}`,
+    key: 'light',
+  },
+  {
+    label: `🌙 暗黑极客风格 ${props.themeMode === 'dark' ? '✓' : ''}`,
+    key: 'dark',
+  },
+]);
+
+function handlePcThemeSelect(key: 'auto' | 'light' | 'dark') {
+  setTheme(key);
+  emit('update:themeMode', key);
+  const labels: Record<string, string> = {
+    auto: '跟随系统外观 (根据当前系统实时决定)',
+    light: '浅色复古模式',
+    dark: '暗黑极客风格',
+  };
+  message?.success(`已切换为：${labels[key]}`);
 }
 
-const themeTitle = computed(() => {
-  if (props.themeMode === 'auto') return '当前主题：跟随系统 (OS Theme)';
-  if (props.themeMode === 'light') return '当前主题：浅色复古 (Light Mode)';
-  return '当前主题：深色模式 (Dark Mode)';
+// H5 移动端：Vant 动作面板 (van-action-sheet)
+const showH5ThemeSheet = ref(false);
+const h5ThemeActions = computed(() => [
+  {
+    name: '💻 跟随系统外观',
+    subname: '根据当前操作系统模式自动决定',
+    value: 'auto' as const,
+    color: props.themeMode === 'auto' ? '#ff5c2b' : undefined,
+  },
+  {
+    name: '☀️ 浅色复古模式',
+    subname: '暖白纸质高亮复古视觉',
+    value: 'light' as const,
+    color: props.themeMode === 'light' ? '#ff5c2b' : undefined,
+  },
+  {
+    name: '🌙 暗黑极客风格',
+    subname: '深黑高对比度暗黑视觉',
+    value: 'dark' as const,
+    color: props.themeMode === 'dark' ? '#ff5c2b' : undefined,
+  },
+]);
+
+function handleH5ThemeSelect(action: { name: string; value: 'auto' | 'light' | 'dark' }) {
+  setTheme(action.value);
+  emit('update:themeMode', action.value);
+  showToast({ message: `已切换为：${action.name}`, icon: 'passed' });
+}
+
+const currentModeText = computed(() => {
+  if (props.themeMode === 'auto') return '系统';
+  if (props.themeMode === 'dark') return '深色';
+  return '浅色';
 });
 </script>
 
@@ -117,12 +167,42 @@ const themeTitle = computed(() => {
         </svg>
       </a>
 
-      <!-- Theme Switcher -->
-      <button class="theme-toggle-btn" @click="cycleTheme" :title="themeTitle">
-        <span v-if="themeMode === 'light'">☀️</span>
-        <span v-else-if="themeMode === 'dark'">🌙</span>
-        <span v-else>💻</span>
-      </button>
+      <!-- 🖥 PC 端：Naive UI 下拉菜单 (n-dropdown) -->
+      <div v-if="!isMobile" class="theme-dropdown-wrapper">
+        <n-dropdown
+          trigger="click"
+          :options="pcThemeOptions"
+          @select="handlePcThemeSelect"
+        >
+          <n-button size="small" round secondary class="pc-dropdown-btn">
+            <template #icon>
+              <span>{{ isDark ? '🌙' : '☀️' }}</span>
+            </template>
+            <span class="btn-text">{{ isDark ? '暗黑模式' : '浅色模式' }}</span>
+            <span class="btn-badge">{{ currentModeText }}</span>
+            <span class="btn-caret">▼</span>
+          </n-button>
+        </n-dropdown>
+      </div>
+
+      <!-- 📱 H5 移动端：Vant 动作面板 (van-action-sheet) -->
+      <div v-else class="theme-dropdown-wrapper">
+        <button class="h5-action-btn" @click="showH5ThemeSheet = true">
+          <span class="btn-icon">{{ isDark ? '🌙' : '☀️' }}</span>
+          <span class="btn-text">{{ isDark ? '暗黑模式' : '浅色模式' }}</span>
+          <span class="btn-badge">{{ currentModeText }}</span>
+          <span class="btn-caret">▼</span>
+        </button>
+
+        <van-action-sheet
+          v-model:show="showH5ThemeSheet"
+          title="选择主题风格 (Vant 动作面板)"
+          :actions="h5ThemeActions"
+          cancel-text="取消"
+          close-on-click-action
+          @select="handleH5ThemeSelect"
+        />
+      </div>
     </div>
   </header>
 </template>
