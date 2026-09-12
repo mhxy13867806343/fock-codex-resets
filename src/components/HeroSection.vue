@@ -69,7 +69,7 @@ async function togglePush() {
       pushEnabled.value = true;
       new Notification('Codex Resets', {
         body: '成功开启 Codex 额度重置实时提醒！',
-        icon: '/logo.svg'
+        icon: '/thsottiaux-avatar.jpg'
       });
       message?.success('已开启重置通知！');
     } else {

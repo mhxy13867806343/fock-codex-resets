@@ -177,8 +177,8 @@ function formatAbsolute(dateStr: string) {
     <ul v-if="displayedResets.length > 0" class="timeline-list">
       <li v-for="item in displayedResets" :key="item.id" class="timeline-item">
         <img
-          src="/logo.svg"
-          alt="Avatar"
+          src="/thsottiaux-avatar.jpg"
+          alt="@thsottiaux"
           class="item-avatar"
           width="44"
           height="44"

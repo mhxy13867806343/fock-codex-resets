@@ -45,7 +45,7 @@ const themeTitle = computed(() => {
 <template>
   <header class="masthead">
     <div class="masthead-brand">
-      <img class="masthead-avatar" src="/logo.svg" alt="Codex Resets" width="48" height="48" />
+      <img class="masthead-avatar" src="/thsottiaux-avatar.jpg" alt="@thsottiaux" width="48" height="48" />
       <div class="masthead-copy">
         <div class="masthead-title-row">
           <h1 class="masthead-title">Codex Resets</h1>
