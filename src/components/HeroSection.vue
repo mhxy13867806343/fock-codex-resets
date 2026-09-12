@@ -51,19 +51,30 @@ const reactionTitle = computed(() => isWithin24Hours.value ? '为此次重置点
 
 async function loadReactionCount() {
   try {
+    const controller = new AbortController();
+    const abortTimeout = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(withToken('/api/reset-requests'), {
       headers: { 'Accept': 'application/json' },
       cache: 'no-store',
+      signal: controller.signal,
     });
+    clearTimeout(abortTimeout);
     if (res.ok) {
       const data = await res.json();
       if (data && typeof data.count === 'number') {
-        reactionCount.value = data.count;
-        localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+        const next = Math.max(reactionCount.value ?? 0, data.count);
+        reactionCount.value = next;
+        localStorage.setItem(STORAGE_REACTION_KEY, String(next));
       }
     }
   } catch (err) {
     console.warn('Failed to load reaction count from server:', err);
+    if (reactionCount.value === null) {
+      const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
+      if (savedCount) {
+        reactionCount.value = parseInt(savedCount, 10);
+      }
+    }
   }
 }
 
@@ -76,8 +87,9 @@ function initLiveWebSocket() {
       try {
         const data = JSON.parse(e.data);
         if (data?.type === 'reset-request-count' && typeof data.count === 'number') {
-          reactionCount.value = data.count;
-          localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+          const next = Math.max(reactionCount.value ?? 0, data.count);
+          reactionCount.value = next;
+          localStorage.setItem(STORAGE_REACTION_KEY, String(next));
         }
       } catch {}
     });
@@ -105,16 +117,21 @@ onMounted(() => {
     pushEnabled.value = true;
   }
 
-  const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
-  if (savedCount) {
-    reactionCount.value = parseInt(savedCount, 10);
-  }
-
-  // Fetch real-time count from https://codex-resets.com/api/reset-requests
+  // Fetch real-time count from https://codex-resets.com/api/reset-requests (starts at null to show [🙏 —])
   loadReactionCount();
   reactionPollTimer = setInterval(loadReactionCount, 12000);
   initLiveWebSocket();
   document.addEventListener('visibilitychange', handleVisibility);
+
+  // Fallback to reveal cached floor if network delays, so it never stays stuck on [🙏 —]
+  setTimeout(() => {
+    if (reactionCount.value === null) {
+      const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
+      if (savedCount) {
+        reactionCount.value = parseInt(savedCount, 10);
+      }
+    }
+  }, 1200);
 
   try {
     const cached = localStorage.getItem(STORAGE_KEY);
@@ -359,8 +376,9 @@ async function sendReactionPost() {
     if (res.ok) {
       const data = await res.json();
       if (data && typeof data.count === 'number') {
-        reactionCount.value = data.count;
-        localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+        const next = Math.max(reactionCount.value ?? 0, data.count);
+        reactionCount.value = next;
+        localStorage.setItem(STORAGE_REACTION_KEY, String(next));
       }
     }
   } catch (err) {
@@ -529,12 +547,13 @@ async function sendReactionPost() {
         <div class="reaction-box">
           <button
             class="reaction-btn"
+            :class="{ 'is-loading': reactionCount === null }"
             @click="handleReaction"
             :title="reactionTitle"
           >
             <span class="reaction-emoji">🙏</span>
-            <span class="reaction-text">{{ reactionLabel }}</span>
-            <span class="reaction-count mono">{{ reactionCount !== null ? reactionCount.toLocaleString() : '...' }}</span>
+            <span v-if="reactionCount !== null" class="reaction-text">{{ reactionLabel }}</span>
+            <span class="reaction-count mono">{{ reactionCount !== null ? reactionCount.toLocaleString() : '—' }}</span>
           </button>
 
           <!-- Floating Emoji & Avatar Bursts -->
