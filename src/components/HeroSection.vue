@@ -72,7 +72,8 @@ async function loadReactionCount() {
     if (reactionCount.value === null) {
       const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
       if (savedCount) {
-        reactionCount.value = parseInt(savedCount, 10);
+        const parsed = parseInt(savedCount, 10);
+        if (!isNaN(parsed)) reactionCount.value = parsed;
       }
     }
   }
@@ -117,7 +118,7 @@ onMounted(() => {
     pushEnabled.value = true;
   }
 
-  // Fetch real-time count from https://codex-resets.com/api/reset-requests (starts at null to show [🙏 —])
+  // Fetch real-time count from https://codex-resets.com/api/reset-requests (starts at null to show [🙏 —] only upon opening page)
   loadReactionCount();
   reactionPollTimer = setInterval(loadReactionCount, 12000);
   initLiveWebSocket();
@@ -128,7 +129,8 @@ onMounted(() => {
     if (reactionCount.value === null) {
       const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
       if (savedCount) {
-        reactionCount.value = parseInt(savedCount, 10);
+        const parsed = parseInt(savedCount, 10);
+        if (!isNaN(parsed)) reactionCount.value = parsed;
       }
     }
   }, 1200);
