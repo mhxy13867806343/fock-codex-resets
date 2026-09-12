@@ -2,16 +2,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 30px 0 16px;
-  gap: 16px;
+  flex-wrap: wrap;
+  padding: 24px 0 16px;
+  gap: 14px;
   border-bottom: var(--border);
   margin-bottom: 24px;
+  max-width: 100%;
 }
 
 .masthead-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .masthead-avatar {

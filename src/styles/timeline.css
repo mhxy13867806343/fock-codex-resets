@@ -3,12 +3,7 @@
 }
 
 .timeline-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .timeline-title-group h2 {
@@ -16,6 +11,20 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 800;
+}
+
+/* Sticky Filter Bar pinned to top of viewport */
+.timeline-sticky-container {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--paper);
+  padding: 10px 0;
+  margin-bottom: 18px;
+  border-bottom: 2px solid var(--ink);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.2s ease;
 }
 
 .timeline-filter-bar {

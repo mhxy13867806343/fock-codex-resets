@@ -51,8 +51,14 @@ const minDate = computed(() => {
 });
 
 const maxDate = computed(() => {
-  return dayjs().endOf('month').toDate();
+  // 只能到当前时间，后面的未来时间不要出来
+  return new Date();
 });
+
+function isDateDisabled(ts: number) {
+  // 禁止选择大于当前时间的未来日期
+  return ts > Date.now();
+}
 
 // PC Naive Date Picker Timestamp
 const pcDateTimestamp = ref<number | null>(null);
@@ -115,7 +121,10 @@ function formatAbsolute(dateStr: string) {
       <div class="timeline-title-group">
         <h2>额度重置动态时间线 (Reset Announcements)</h2>
       </div>
+    </div>
 
+    <!-- Sticky Filter Bar pinned to top of viewport -->
+    <div class="timeline-sticky-container">
       <div class="timeline-filter-bar">
         <!-- Type Filter Chips -->
         <button
@@ -149,6 +158,7 @@ function formatAbsolute(dateStr: string) {
             placeholder="按日期筛选"
             clearable
             size="small"
+            :is-date-disabled="isDateDisabled"
             @update:value="onPcDateChange"
             style="width: 140px;"
           />

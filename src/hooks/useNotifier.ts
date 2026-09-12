@@ -1,5 +1,5 @@
 import { useMessage, useDialog, useNotification } from 'naive-ui';
-import { showToast, showDialog as showVantDialog, showNotify as showVantNotify } from 'vant';
+import { showToast, showDialog as showVantDialog } from 'vant';
 import { useDevice } from './useDevice';
 
 export function useNotifier() {
@@ -9,66 +9,49 @@ export function useNotifier() {
   const naiveNotification = useNotification();
 
   /**
-   * Prompts user about page/data update using the corresponding UI component library:
-   * PC -> Naive UI
-   * H5 -> Vant
+   * 触发页面数据更新/刷新提示（根据当前设备环境严格使用对应组件库）
+   * 需求：页面更新的时候，要判断下的，提示使用对应版本的组件库 进行刷新的。
    */
-  function notifyPageUpdate(options?: {
-    title?: string;
-    message?: string;
-    onConfirm?: () => void;
-  }) {
-    const title = options?.title || '数据已更新';
-    const content = options?.message || (isMobile.value 
-      ? '【移动端 Vant】已检测到最新的 Codex 重置数据并刷新展示！' 
-      : '【桌面端 Naive UI】已检测到最新的 Codex 重置数据并刷新展示！');
-
+  function promptRefresh(onConfirm: () => Promise<void> | void) {
     if (isMobile.value) {
-      // H5 uses Vant
-      showToast({
-        message: content,
-        icon: 'success',
-        duration: 2500,
-      });
-      options?.onConfirm?.();
-    } else {
-      // PC uses Naive UI
-      naiveNotification?.success({
-        title,
-        content,
-        duration: 3000,
-        keepAliveOnHover: true,
-      });
-      naiveMessage?.success(content);
-      options?.onConfirm?.();
-    }
-  }
-
-  /**
-   * Confirmation dialog for manual refresh action
-   */
-  function confirmRefresh(onRefresh: () => Promise<void> | void) {
-    if (isMobile.value) {
-      // H5 uses Vant Dialog
+      // 📱 H5 移动端：使用 Vant 提示与刷新
       showVantDialog({
         title: 'Vant 移动端刷新提示',
-        message: '确认拉取最新的 OpenAI Codex 额度重置数据？',
+        message: '检测到页面数据有更新，提示使用 Vant 移动端组件库进行刷新。',
         showCancelButton: true,
+        confirmButtonText: '使用 Vant 刷新',
+        cancelButtonText: '取消',
         confirmButtonColor: '#ff5c2b',
-      }).then(() => {
-        onRefresh();
-        showToast({ message: '数据刷新完成 (Vant)', icon: 'passed' });
-      }).catch(() => {});
+      }).then(async () => {
+        showToast({ type: 'loading', message: 'Vant 正在刷新数据...', duration: 0 });
+        try {
+          await onConfirm();
+          showToast({ type: 'success', message: '已使用 Vant 移动端组件库完成刷新', icon: 'passed' });
+        } catch {
+          showToast({ type: 'fail', message: 'Vant 刷新失败，请稍后重试' });
+        }
+      }).catch(() => {
+        // 用户取消
+      });
     } else {
-      // PC uses Naive UI Dialog
+      // 🖥 桌面 PC 端：使用 Naive UI 提示与刷新
       naiveDialog?.info({
-        title: 'Naive UI 桌面端刷新确认',
-        content: '是否立即连接官方 API 刷新获取最新重置状态与热力图记录？',
-        positiveText: '确认刷新',
+        title: 'Naive UI 桌面端刷新提示',
+        content: '检测到页面数据有更新，提示使用 Naive UI 桌面端组件库进行刷新。',
+        positiveText: '使用 Naive UI 刷新',
         negativeText: '取消',
         onPositiveClick: async () => {
-          await onRefresh();
-          naiveMessage?.success('已使用 Naive UI 刷新并载入最新数据！');
+          try {
+            await onConfirm();
+            naiveNotification?.success({
+              title: 'Naive UI 刷新成功',
+              content: '已使用 Naive UI 桌面端组件库成功获取最新 Codex 额度重置数据！',
+              duration: 3000,
+            });
+            naiveMessage?.success('已使用 Naive UI 桌面端组件库完成刷新');
+          } catch {
+            naiveMessage?.error('Naive UI 刷新失败，请检查网络连接');
+          }
         },
       });
     }
@@ -92,8 +75,7 @@ export function useNotifier() {
 
   return {
     isMobile,
-    notifyPageUpdate,
-    confirmRefresh,
+    promptRefresh,
     showSuccess,
     showError,
   };
