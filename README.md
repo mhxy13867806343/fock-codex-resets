@@ -5,12 +5,17 @@
 **OpenAI Codex 额度重置监控与历史记录追踪器**  
 *Track the latest OpenAI Codex limit resets, browse reset history, and get instant notifications.*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-success?style=for-the-badge&logo=githubpages&logoColor=white)](https://mhxy13867806343.github.io/fock-codex-resets/)
+[![Deploy Status](https://github.com/mhxy13867806343/fock-codex-resets/actions/workflows/deploy.yml/badge.svg)](https://github.com/mhxy13867806343/fock-codex-resets/actions/workflows/deploy.yml)
 [![Website](https://img.shields.io/badge/Website-codex--resets.com-ff9800.svg)](https://codex-resets.com/)
-[![API Status](https://img.shields.io/badge/API-v1%20Live-brightgreen.svg)](https://codex-resets.com/api/docs)
-[![MCP Supported](https://img.shields.io/badge/MCP-Supported-blue.svg)](https://codex-resets.com/)
+[![Vue](https://img.shields.io/badge/Vue-3.5%20%2B%20Vite%206-42b883.svg)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-[在线访问](https://codex-resets.com/) • [API 文档](https://codex-resets.com/api/docs) • [OpenAPI 规范](https://codex-resets.com/api/openapi.json) • [Telegram 订阅](https://t.me/codex_resets)
+### 🌐 在线预览 / Live Demo
+👉 **[https://mhxy13867806343.github.io/fock-codex-resets/](https://mhxy13867806343.github.io/fock-codex-resets/)**
+
+[在线预览](https://mhxy13867806343.github.io/fock-codex-resets/) • [官方原站](https://codex-resets.com/) • [API 文档](https://codex-resets.com/api/docs) • [OpenAPI 规范](https://codex-resets.com/api/openapi.json) • [Telegram 订阅](https://t.me/codex_resets)
 
 </div>
 
@@ -22,7 +27,8 @@
 
 当 OpenAI 官方（例如 [@thsottiaux](https://x.com/thsottiaux)）宣布重置全球或区域用户 Codex 限制时，该系统能够第一时间捕获、分析并向开发者推送通知，同时提供类似 GitHub 贡献图的热力图展示、重置周期统计分析以及开放的 REST API 与 MCP (Model Context Protocol) 接口。
 
-参考线上站点：[https://codex-resets.com/](https://codex-resets.com/)
+- 🔗 **在线预览部署站**：[https://mhxy13867806343.github.io/fock-codex-resets/](https://mhxy13867806343.github.io/fock-codex-resets/)
+- 🌐 **参考官方线上原站**：[https://codex-resets.com/](https://codex-resets.com/)
 
 ---
 
@@ -176,26 +182,46 @@ graph TD
 
 ---
 
-## 🚀 快速开始 (Quickstart)
+## 🚀 快速开始与本地开发 (Quickstart)
 
 ### 环境要求
 - Node.js >= 18.0.0
 - npm / pnpm / yarn
 
-### 步骤
+### 本地启动
 
-1. **克隆代码库**
+1. **克隆代码库并安装依赖**
    ```bash
    git clone https://github.com/mhxy13867806343/fock-codex-resets.git
    cd fock-codex-resets
+   npm install
    ```
 
-2. **后续开发计划**
-   - [x] 初始化项目文档与规范 (`README.md`)
-   - [ ] 搭建前端仪表盘 UI（Hero 状态区、热力图组件、统计卡片）
-   - [ ] 接入 `/api/v1/status` 与 `/api/v1/resets` 数据代理与缓存
-   - [ ] 实现 Telegram Bot 消息推送与 Web Push 订阅
-   - [ ] 完善 MCP 协议适配器
+2. **启动本地开发服务器**
+   ```bash
+   npm run dev
+   ```
+   启动后访问控制台输出的本地地址（默认 `http://localhost:5173/`）。
+
+3. **打包生产构建**
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 🚀 持续集成与部署 (GitHub Actions & Pages)
+
+本项目已配置自动化 CI/CD 工作流（`.github/workflows/deploy.yml`）：
+- 每当向 `main` 分支提交推送代码时，GitHub Actions 会自动执行 `npm ci && npm run build`。
+- 构建产物将自动部署并发布至 **GitHub Pages**。
+
+### 开启 GitHub Pages 步骤：
+1. 打开 GitHub 仓库页面：[mhxy13867806343/fock-codex-resets](https://github.com/mhxy13867806343/fock-codex-resets)
+2. 点击顶部 **Settings** -> 左侧导航 **Pages**
+3. 在 **Build and deployment** 下方的 **Source** 选择：`GitHub Actions`
+4. 部署完成后即可通过下方在线预览链接直接访问：
+   👉 **[https://mhxy13867806343.github.io/fock-codex-resets/](https://mhxy13867806343.github.io/fock-codex-resets/)**
 
 ---
 

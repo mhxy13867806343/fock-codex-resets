@@ -38,6 +38,9 @@ let timer: any = null;
 
 const latestReset = computed(() => props.status?.data.latest_reset);
 
+const API_BASE = import.meta.env.PROD ? 'https://codex-resets.com' : '';
+const avatarUrl = `${import.meta.env.BASE_URL}thsottiaux-avatar.jpg`;
+
 // Dynamic thanks / beg mode matching codex-resets.com (within 24 hours of reset => thanks, else => beg)
 const isWithin24Hours = computed(() => {
   if (!latestReset.value?.announced_at) return true;
@@ -53,7 +56,7 @@ async function loadReactionCount() {
   try {
     const controller = new AbortController();
     const abortTimeout = setTimeout(() => controller.abort(), 6000);
-    const res = await fetch(withToken('/api/reset-requests'), {
+    const res = await fetch(withToken(`${API_BASE}/api/reset-requests`), {
       headers: { 'Accept': 'application/json' },
       cache: 'no-store',
       signal: controller.signal,
@@ -82,8 +85,10 @@ async function loadReactionCount() {
 function initLiveWebSocket() {
   if (typeof window === 'undefined' || typeof WebSocket === 'undefined') return;
   try {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    ws = new WebSocket(`${protocol}//${window.location.host}/api/reset-requests/live`);
+    const wsUrl = import.meta.env.PROD
+      ? 'wss://codex-resets.com/api/reset-requests/live'
+      : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/api/reset-requests/live`;
+    ws = new WebSocket(wsUrl);
     ws.addEventListener('message', (e) => {
       try {
         const data = JSON.parse(e.data);
@@ -181,7 +186,7 @@ async function togglePush() {
       pushEnabled.value = true;
       new Notification('Codex Resets', {
         body: '成功开启 Codex 额度重置实时提醒！',
-        icon: '/thsottiaux-avatar.jpg'
+        icon: avatarUrl
       });
       message?.success('已开启重置通知！');
     } else {
@@ -367,7 +372,7 @@ async function sendReactionPost() {
   if (n < 1 || !reqId) return;
 
   try {
-    const res = await fetch(withToken('/api/reset-requests'), {
+    const res = await fetch(withToken(`${API_BASE}/api/reset-requests`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -568,7 +573,7 @@ async function sendReactionPost() {
             >
               <img
                 v-if="burst.emoji === 'avatar'"
-                src="/thsottiaux-avatar.jpg"
+                :src="avatarUrl"
                 alt=""
                 class="burst-avatar"
               />

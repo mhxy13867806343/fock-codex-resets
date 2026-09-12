@@ -7,6 +7,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import { resolve } from 'path';
 
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/fock-codex-resets/' : '/',
   plugins: [
     vue(),
     AutoImport({

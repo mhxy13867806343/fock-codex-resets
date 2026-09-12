@@ -95,6 +95,8 @@ const currentModeText = computed(() => {
 function reloadCurrentPage() {
   window.location.reload();
 }
+
+const avatarUrl = `${import.meta.env.BASE_URL}thsottiaux-avatar.jpg`;
 </script>
 
 <template>
@@ -107,7 +109,7 @@ function reloadCurrentPage() {
       tabindex="0"
       @keydown.enter="reloadCurrentPage"
     >
-      <img class="masthead-avatar" src="/thsottiaux-avatar.jpg" alt="@thsottiaux" width="48" height="48" />
+      <img class="masthead-avatar" :src="avatarUrl" alt="@thsottiaux" width="48" height="48" />
       <div class="masthead-copy">
         <div class="masthead-title-row">
           <h1 class="masthead-title">Codex Resets</h1>

@@ -12,6 +12,7 @@ const emit = defineEmits<{
 
 const { isMobile } = useDevice();
 const { withToken } = useToken();
+const avatarUrl = `${import.meta.env.BASE_URL}thsottiaux-avatar.jpg`;
 
 // Filter states
 const typeFilter = ref<'all' | ResetType>('all');
@@ -202,7 +203,7 @@ function formatAbsolute(dateStr: string) {
           title="访问 @thsottiaux 主页"
         >
           <img
-            src="/thsottiaux-avatar.jpg"
+            :src="avatarUrl"
             alt="@thsottiaux"
             class="item-avatar"
             width="44"
