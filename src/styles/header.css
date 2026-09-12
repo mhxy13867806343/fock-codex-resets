@@ -284,5 +284,46 @@
   margin-left: 2px;
 }
 
+/* User-provided Circle Icon Button for Theme */
+.theme-circle-btn {
+  width: 38px;
+  height: 38px;
+  border: var(--border);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 2.5px 2.5px 0 var(--ink);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+
+.theme-circle-btn:hover {
+  transform: translate(-1.5px, -1.5px);
+  box-shadow: 3.5px 3.5px 0 var(--ink);
+  background: var(--sun);
+  color: #26201a;
+}
+
+.theme-circle-btn:active {
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.theme-icon-svg {
+  width: 19px;
+  height: 19px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-circle-btn:hover .theme-icon-svg {
+  transform: rotate(18deg) scale(1.12);
+}
+
+
 
 

@@ -179,31 +179,98 @@ function reloadCurrentPage() {
         </svg>
       </a>
 
-      <!-- 🖥 PC 端：Naive UI 下拉菜单 (n-dropdown) -->
+      <!-- 🖥 PC 端：Naive UI 下拉菜单 (以用户指定 Moon/Sun Icon 按钮为触发器) -->
       <div v-if="!isMobile" class="theme-dropdown-wrapper">
         <n-dropdown
           trigger="click"
           :options="pcThemeOptions"
           @select="handlePcThemeSelect"
         >
-          <n-button size="small" round secondary class="pc-dropdown-btn">
-            <template #icon>
-              <span>{{ isDark ? '🌙' : '☀️' }}</span>
-            </template>
-            <span class="btn-text">{{ isDark ? '暗黑模式' : '浅色模式' }}</span>
-            <span class="btn-badge">{{ currentModeText }}</span>
-            <span class="btn-caret">▼</span>
-          </n-button>
+          <button
+            class="theme-circle-btn"
+            :title="`切换主题风格 (当前: ${isDark ? '暗黑极客' : '浅色复古'}, 点击下拉选择)`"
+            aria-label="切换主题风格"
+          >
+            <!-- 浅色模式：月亮 Icon (图1) -->
+            <svg
+              v-if="!isDark"
+              class="theme-icon-svg moon-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+            </svg>
+            <!-- 暗黑模式：太阳与8射线 Icon (图2) -->
+            <svg
+              v-else
+              class="theme-icon-svg sun-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="3.6" />
+              <line x1="12" y1="3.2" x2="12" y2="5.5" />
+              <line x1="12" y1="18.5" x2="12" y2="20.8" />
+              <line x1="3.2" y1="12" x2="5.5" y2="12" />
+              <line x1="18.5" y1="12" x2="20.8" y2="12" />
+              <line x1="5.8" y1="5.8" x2="7.4" y2="7.4" />
+              <line x1="16.6" y1="16.6" x2="18.2" y2="18.2" />
+              <line x1="5.8" y1="18.2" x2="7.4" y2="16.6" />
+              <line x1="16.6" y1="7.4" x2="18.2" y2="5.8" />
+            </svg>
+          </button>
         </n-dropdown>
       </div>
 
-      <!-- 📱 H5 移动端：Vant 动作面板 (van-action-sheet) -->
+      <!-- 📱 H5 移动端：Vant 动作面板 (以用户指定 Moon/Sun Icon 按钮为触发器) -->
       <div v-else class="theme-dropdown-wrapper">
-        <button class="h5-action-btn" @click="showH5ThemeSheet = true">
-          <span class="btn-icon">{{ isDark ? '🌙' : '☀️' }}</span>
-          <span class="btn-text">{{ isDark ? '暗黑模式' : '浅色模式' }}</span>
-          <span class="btn-badge">{{ currentModeText }}</span>
-          <span class="btn-caret">▼</span>
+        <button
+          class="theme-circle-btn"
+          @click="showH5ThemeSheet = true"
+          :title="`切换主题风格 (当前: ${isDark ? '暗黑极客' : '浅色复古'}, 点击打开面板)`"
+          aria-label="切换主题风格"
+        >
+          <!-- 浅色模式：月亮 Icon (图1) -->
+          <svg
+            v-if="!isDark"
+            class="theme-icon-svg moon-svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+          <!-- 暗黑模式：太阳与8射线 Icon (图2) -->
+          <svg
+            v-else
+            class="theme-icon-svg sun-svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3.6" />
+            <line x1="12" y1="3.2" x2="12" y2="5.5" />
+            <line x1="12" y1="18.5" x2="12" y2="20.8" />
+            <line x1="3.2" y1="12" x2="5.5" y2="12" />
+            <line x1="18.5" y1="12" x2="20.8" y2="12" />
+            <line x1="5.8" y1="5.8" x2="7.4" y2="7.4" />
+            <line x1="16.6" y1="16.6" x2="18.2" y2="18.2" />
+            <line x1="5.8" y1="18.2" x2="7.4" y2="16.6" />
+            <line x1="16.6" y1="7.4" x2="18.2" y2="5.8" />
+          </svg>
         </button>
 
         <van-action-sheet
