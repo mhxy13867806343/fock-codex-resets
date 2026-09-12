@@ -15,6 +15,18 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+
+.masthead-brand:hover .masthead-title {
+  color: var(--accent);
+  transition: color 0.15s ease;
+}
+
+.masthead-brand:active {
+  transform: scale(0.98);
 }
 
 .masthead-avatar {

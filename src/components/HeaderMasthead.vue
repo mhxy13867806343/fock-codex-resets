@@ -90,11 +90,23 @@ const currentModeText = computed(() => {
   if (props.themeMode === 'dark') return '深色';
   return '浅色';
 });
+
+// 点击标题刷新当前页面
+function reloadCurrentPage() {
+  window.location.reload();
+}
 </script>
 
 <template>
   <header class="masthead">
-    <div class="masthead-brand">
+    <div
+      class="masthead-brand"
+      @click="reloadCurrentPage"
+      title="点击刷新当前页面"
+      role="button"
+      tabindex="0"
+      @keydown.enter="reloadCurrentPage"
+    >
       <img class="masthead-avatar" src="/thsottiaux-avatar.jpg" alt="@thsottiaux" width="48" height="48" />
       <div class="masthead-copy">
         <div class="masthead-title-row">
