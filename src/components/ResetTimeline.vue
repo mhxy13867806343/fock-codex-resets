@@ -18,14 +18,10 @@ const typeFilter = ref<'all' | ResetType>('all');
 const visibleCount = ref(15);
 
 // Expanded tweet text IDs
-const expandedIds = ref<Set<string>>(new Set());
+const expandedMap = reactive<Record<string, boolean>>({});
 
 function toggleExpand(id: string) {
-  if (expandedIds.value.has(id)) {
-    expandedIds.value.delete(id);
-  } else {
-    expandedIds.value.add(id);
-  }
+  expandedMap[id] = !expandedMap[id];
 }
 
 // H5 Vant Date Picker State (https://vant-ui.github.io/vant/#/zh-CN/date-picker)
@@ -225,20 +221,28 @@ function formatAbsolute(dateStr: string) {
             </span>
           </div>
 
-          <!-- 2-line clamp with expand toggle -->
+          <!-- Text wrapper with animated expand / collapse -->
           <div class="item-text-wrapper">
-            <p
-              class="item-text"
-              :class="{ 'clamp-2': !expandedIds.has(item.id) }"
+            <div
+              class="item-text-collapsible"
+              :class="{
+                'is-clampable': item.text.length > 75 || item.text.includes('\n'),
+                'is-expanded': !!expandedMap[item.id]
+              }"
             >
-              {{ item.text }}
-            </p>
+              <p class="item-text">
+                {{ item.text }}
+              </p>
+            </div>
             <button
               v-if="item.text.length > 75 || item.text.includes('\n')"
+              type="button"
               class="toggle-more-btn"
+              :class="{ 'is-expanded': !!expandedMap[item.id] }"
               @click="toggleExpand(item.id)"
             >
-              {{ expandedIds.has(item.id) ? '收起全文 ▲' : '展开更多 ▼' }}
+              <span class="toggle-label">{{ expandedMap[item.id] ? '收起全文' : '展开更多' }}</span>
+              <span class="toggle-arrow">▼</span>
             </button>
           </div>
 

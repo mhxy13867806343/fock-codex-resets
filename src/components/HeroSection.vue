@@ -250,7 +250,7 @@ function handleReaction() {
         title="刷新数据"
       >
         <span class="pill-icon">🔄</span>
-        <span>刷新状态</span>
+        <span class="pill-label">刷新状态</span>
       </button>
 
       <!-- Browser Notification Toggle -->
@@ -261,7 +261,7 @@ function handleReaction() {
         :title="pushEnabled ? '已开启浏览器推送提醒' : '开启浏览器重置推送提醒'"
       >
         <span class="pill-icon">🔔</span>
-        <span>{{ pushEnabled ? '推送已开启' : '浏览器提醒' }}</span>
+        <span class="pill-label">{{ pushEnabled ? '推送已开启' : '浏览器提醒' }}</span>
       </button>
 
       <!-- Telegram Link with Token -->
@@ -273,7 +273,7 @@ function handleReaction() {
         title="Telegram 频道订阅"
       >
         <span class="pill-icon">✈️</span>
-        <span>Telegram</span>
+        <span class="pill-label">Telegram</span>
       </a>
 
       <!-- Email Toggle -->
@@ -284,7 +284,7 @@ function handleReaction() {
         title="邮件提醒订阅"
       >
         <span class="pill-icon">✉️</span>
-        <span>邮件订阅</span>
+        <span class="pill-label">邮件订阅</span>
       </button>
     </div>
 

@@ -9,58 +9,102 @@
 }
 
 .subscription-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
   margin-bottom: 24px;
 }
 
 .action-pill {
   border: var(--border);
-  background: var(--card);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
-  border-radius: 999px;
-  padding: 8px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 13px 12px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   text-decoration: none;
-  transition: all 0.12s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.15s ease;
+  user-select: none;
 }
 
-.action-pill:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--ink);
+.action-pill .pill-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 
-.push-pill.active {
-  background: var(--accent);
-  color: #fff;
+.action-pill .pill-label {
+  white-space: nowrap;
 }
 
-.push-pill:hover {
-  background: var(--sun);
-}
-
-.telegram-pill:hover {
-  background: var(--sky);
-}
-
-.email-pill:hover, .email-pill.active {
-  background: var(--rose);
-}
-
+/* 4 distinct colorful cards with subtle playful rotation matching stat tiles */
 .refresh-pill {
   background: var(--mint);
   color: #173811;
+  transform: rotate(-1deg);
 }
 
-.refresh-pill:hover {
-  background: #a3db8c;
+.push-pill {
+  background: var(--sun);
+  color: #26201a;
+  transform: rotate(0.8deg);
+}
+
+.push-pill.active {
+  background: #ffb703;
+  color: #1f1402;
+}
+
+.telegram-pill {
+  background: var(--sky);
+  color: #10364e;
+  transform: rotate(-0.6deg);
+}
+
+.email-pill {
+  background: var(--rose);
+  color: #491217;
+  transform: rotate(1deg);
+}
+
+.email-pill.active {
+  background: #ff758f;
+  color: #380b13;
+}
+
+/* Hover & Active Feedback exactly like stat tiles */
+.action-pill:hover {
+  transform: rotate(0) translateY(-3px);
+  box-shadow: 6px 6px 0 var(--ink);
+  filter: brightness(1.03);
+}
+
+.action-pill:active {
+  transform: rotate(0) translateY(1px);
+  box-shadow: 2px 2px 0 var(--ink);
+  filter: brightness(0.96);
+}
+
+@media (max-width: 640px) {
+  .subscription-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .action-pill {
+    transform: none !important;
+    padding: 11px 8px;
+    font-size: 13px;
+  }
+  .action-pill:hover {
+    transform: translateY(-2px) !important;
+  }
+  .action-pill:active {
+    transform: translateY(1px) !important;
+  }
 }
 
 .email-form-wrapper {
