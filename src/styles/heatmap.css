@@ -1,0 +1,178 @@
+.graph-section {
+  margin-bottom: 34px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-title-box h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.section-sub {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.graph-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-chip {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--ink);
+  display: inline-block;
+}
+
+.legend-chip--regular {
+  background: var(--cg-fill);
+}
+
+.legend-chip--banked {
+  background: var(--cg-banked);
+}
+
+.legend-chip--empty {
+  background: var(--cg-empty);
+}
+
+.graph-card {
+  border: var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  overflow: hidden;
+}
+
+.cg-container {
+  display: flex;
+  gap: 8px;
+}
+
+.cg-weekdays {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--ink-3);
+  text-align: right;
+  padding-right: 4px;
+}
+
+.cg-weekday-header {
+  height: 16px;
+}
+
+.cg-weekday {
+  height: 16px;
+  line-height: 16px;
+}
+
+.cg-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  flex: 1;
+}
+
+.cg-grid {
+  display: flex;
+  gap: 4px;
+}
+
+.cg-week-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cg-month-label {
+  height: 16px;
+  font-size: 10px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.cg-cell {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: none;
+  background: var(--cg-empty);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cg-cell:hover {
+  transform: scale(1.35);
+  z-index: 2;
+}
+
+.cg-cell.has-reset {
+  background: var(--cg-fill);
+  border: 1.5px solid var(--ink);
+}
+
+.cg-cell.has-reset.is-banked {
+  background: var(--cg-banked);
+}
+
+.cg-cell.is-active {
+  box-shadow: 0 0 0 2px var(--ink);
+  transform: scale(1.4);
+}
+
+.cg-cell--empty-space {
+  background: transparent;
+  cursor: default;
+}
+
+.cell-tooltip-content {
+  max-width: 260px;
+}
+
+.tooltip-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--sun);
+  color: #26201a;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.tooltip-text {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.tooltip-empty {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 3px;
+}

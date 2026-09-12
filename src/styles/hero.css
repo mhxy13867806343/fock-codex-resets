@@ -1,0 +1,245 @@
+.hero {
+  margin-bottom: 28px;
+}
+
+.hero-explainer {
+  font-size: 16px;
+  color: var(--ink-2);
+  margin-bottom: 18px;
+}
+
+.subscription-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.action-pill {
+  border: var(--border);
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.12s ease;
+}
+
+.action-pill:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.push-pill.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.push-pill:hover {
+  background: var(--sun);
+}
+
+.telegram-pill:hover {
+  background: var(--sky);
+}
+
+.email-pill:hover, .email-pill.active {
+  background: var(--rose);
+}
+
+.refresh-pill {
+  background: var(--mint);
+  color: #173811;
+}
+
+.refresh-pill:hover {
+  background: #a3db8c;
+}
+
+.email-form-wrapper {
+  margin-bottom: 20px;
+}
+
+.email-form-pc {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.watch-alert {
+  border: var(--border);
+  background: var(--sun);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  margin-bottom: 20px;
+}
+
+.watch-badge {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.watch-text {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+/* Hero Card */
+.hero-card {
+  border: var(--border);
+  background: var(--card);
+  box-shadow: 6px 6px 0 var(--ink);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  position: relative;
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.hero-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+}
+
+.hero-figure-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.hero-figure {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6.5vw, 62px);
+  font-weight: 800;
+  line-height: 1.05;
+  background: var(--sun);
+  color: #26201a;
+  border: var(--border);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 12px;
+  padding: 4px 18px;
+  display: inline-block;
+  transform: rotate(-1deg);
+}
+
+.reaction-box {
+  position: relative;
+}
+
+.reaction-btn {
+  border: var(--border);
+  background: var(--sun);
+  color: #26201a;
+  box-shadow: var(--shadow-sm);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.reaction-btn:hover {
+  background: var(--sun-hover);
+  transform: translateY(-1px);
+}
+
+.reaction-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.reaction-emoji {
+  font-size: 18px;
+}
+
+.burst-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.burst-particle {
+  position: absolute;
+  font-size: 20px;
+  animation: burstUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes burstUp {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -60px) scale(1.3);
+  }
+}
+
+.hero-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.hero-time-info {
+  font-size: 13px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  color: var(--accent);
+}
+
+.tweet-origin-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hero-tweet-preview {
+  margin: 14px 0 0;
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  font-style: italic;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+}

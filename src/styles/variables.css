@@ -1,0 +1,61 @@
+:root {
+  color-scheme: light;
+  --paper: #fff4dd;
+  --ink: #26201a;
+  --ink-2: #5c5347;
+  --ink-3: #877b6b;
+  --accent: #ff5c2b;
+  --accent-hover: #ee4518;
+  --sun: #ffd84d;
+  --sun-hover: #ffe070;
+  --rose: #ffb9cc;
+  --sky: #a5dcff;
+  --peach: #ffb07a;
+  --mint: #b9e6a6;
+  --card: #fffdf7;
+  --cg-empty: #f1e3c4;
+  --cg-fill: var(--accent);
+  --cg-banked: var(--peach);
+  --border: 2px solid var(--ink);
+  --shadow: 4px 4px 0 var(--ink);
+  --shadow-sm: 2px 2px 0 var(--ink);
+  --shadow-hover: 3px 3px 0 var(--ink);
+  --radius: 14px;
+  --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", monospace;
+  --cell-size: 20px;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #17130f;
+  --ink: #f4ede4;
+  --ink-2: #c9bfb4;
+  --ink-3: #9e9286;
+  --accent: #ff5c2b;
+  --accent-hover: #ff774d;
+  --sun: #e6b800;
+  --sun-hover: #ffcc00;
+  --rose: #cc6b84;
+  --sky: #5ea3cc;
+  --peach: #cc7843;
+  --mint: #62a350;
+  --card: #241e19;
+  --cg-empty: #3a3229;
+  --cg-fill: var(--accent);
+  --cg-banked: var(--peach);
+  --border: 2px solid #4d4236;
+  --shadow: 4px 4px 0 #0d0a08;
+  --shadow-sm: 2px 2px 0 #0d0a08;
+  --shadow-hover: 3px 3px 0 #0d0a08;
+}
+
+/* Vant Dark Theme Custom Properties */
+.van-theme-dark {
+  --van-background: #17130f;
+  --van-background-2: #241e19;
+  --van-text-color: #f4ede4;
+  --van-text-color-2: #c9bfb4;
+  --van-border-color: #4d4236;
+}
