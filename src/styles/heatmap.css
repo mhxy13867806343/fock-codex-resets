@@ -109,10 +109,42 @@
 }
 
 .cg-month-label {
-  height: 16px;
-  font-size: 10px;
+  height: 20px;
+  font-size: 11px;
   color: var(--ink-3);
   white-space: nowrap;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cg-month-label.is-current-month {
+  z-index: 5;
+}
+
+.current-month-badge {
+  background: var(--sun);
+  color: #26201a;
+  border: 1.5px solid var(--ink);
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  letter-spacing: 0.3px;
+  animation: pulseHighlight 2s infinite ease-in-out;
+}
+
+@keyframes pulseHighlight {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .cg-cell {

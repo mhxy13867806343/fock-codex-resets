@@ -11,6 +11,7 @@ const emit = defineEmits<{
 }>();
 
 const { isMobile } = useDevice();
+const scrollRef = ref<HTMLElement | null>(null);
 
 interface DayCell {
   dateString: string;
@@ -20,6 +21,7 @@ interface DayCell {
 
 interface WeekColumn {
   monthLabel: string;
+  isCurrentMonth: boolean;
   days: (DayCell | null)[];
 }
 
@@ -32,23 +34,34 @@ const calendarWeeks = computed<WeekColumn[]>(() => {
     }
   }
 
-  const end = dayjs().endOf('week');
+  const now = dayjs();
+  const currentMonthStr = now.format('MMM');
+  const currentMonthKey = now.format('YYYY-MM');
+
+  const end = now.endOf('week');
   const start = end.subtract(51, 'week').startOf('week');
 
   const weeks: WeekColumn[] = [];
   let current = start;
-  let lastMonth = -1;
 
   for (let w = 0; w < 52; w++) {
     const days: (DayCell | null)[] = [];
     let monthLabel = '';
+    let isCurrentMonth = false;
 
     for (let d = 0; d < 7; d++) {
       const dStr = current.format('YYYY-MM-DD');
-      const m = current.month();
-      if (m !== lastMonth && d === 0) {
+      
+      // 精确对齐到月份第 1 天所在周列
+      if (current.date() === 1 || (w === 0 && d === 0)) {
         monthLabel = current.format('MMM');
-        lastMonth = m;
+      }
+
+      if (current.format('YYYY-MM') === currentMonthKey) {
+        // 当前月份列
+        if (monthLabel === currentMonthStr) {
+          isCurrentMonth = true;
+        }
       }
 
       days.push({
@@ -60,10 +73,30 @@ const calendarWeeks = computed<WeekColumn[]>(() => {
       current = current.add(1, 'day');
     }
 
+    if (monthLabel === currentMonthStr) {
+      isCurrentMonth = true;
+    }
+
     weeks.push({
       monthLabel,
+      isCurrentMonth,
       days,
     });
+  }
+
+  // 确保当前月份标签必定高亮展示并精确对齐
+  const hasCurrentMonthBadge = weeks.some(wk => wk.isCurrentMonth && wk.monthLabel);
+  if (!hasCurrentMonthBadge) {
+    for (let i = weeks.length - 1; i >= 0; i--) {
+      const containsCurrentMonthDay = weeks[i].days.some(
+        d => d && d.dateString.startsWith(currentMonthKey)
+      );
+      if (containsCurrentMonthDay) {
+        weeks[i].monthLabel = currentMonthStr;
+        weeks[i].isCurrentMonth = true;
+        break;
+      }
+    }
   }
 
   return weeks;
@@ -76,6 +109,25 @@ function onCellClick(day: DayCell) {
     emit('select-date', day.dateString);
   }
 }
+
+// 自动对齐滚动条至当前最新月份（右侧末尾）
+function scrollToCurrent() {
+  if (scrollRef.value) {
+    scrollRef.value.scrollLeft = scrollRef.value.scrollWidth;
+  }
+}
+
+onMounted(() => {
+  nextTick(() => {
+    scrollToCurrent();
+  });
+});
+
+watch(() => props.resets, () => {
+  nextTick(() => {
+    scrollToCurrent();
+  });
+});
 </script>
 
 <template>
@@ -116,16 +168,29 @@ function onCellClick(day: DayCell) {
           <span class="cg-weekday">周六</span>
         </div>
 
-        <!-- Scrollable Heatmap Grid -->
-        <div class="cg-scroll">
+        <!-- Scrollable Heatmap Grid (自动对齐至当前位置) -->
+        <div class="cg-scroll" ref="scrollRef">
           <div class="cg-grid">
             <div
               v-for="(week, wIdx) in calendarWeeks"
               :key="wIdx"
               class="cg-week-col"
             >
-              <span class="cg-month-label mono">
-                {{ week.monthLabel }}
+              <!-- 月份标签：精确对齐，且当前月高亮显示 -->
+              <span
+                class="cg-month-label mono"
+                :class="{ 'is-current-month': week.isCurrentMonth }"
+              >
+                <span
+                  v-if="week.monthLabel && week.isCurrentMonth"
+                  class="current-month-badge"
+                  title="当前月份"
+                >
+                  ⚡️ {{ week.monthLabel }} (本月)
+                </span>
+                <span v-else-if="week.monthLabel">
+                  {{ week.monthLabel }}
+                </span>
               </span>
 
               <div
