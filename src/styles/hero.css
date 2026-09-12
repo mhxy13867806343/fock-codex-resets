@@ -404,7 +404,23 @@
 .burst-particle {
   position: absolute;
   font-size: 20px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: burstUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  user-select: none;
+}
+
+.burst-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  display: block;
 }
 
 @keyframes burstUp {

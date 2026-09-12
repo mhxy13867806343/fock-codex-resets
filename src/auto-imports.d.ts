@@ -84,6 +84,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { DeviceMode } from './hooks/useDevice'
+  import('./hooks/useDevice')
+  // @ts-ignore
   export type { ThemeMode } from './hooks/useTheme'
   import('./hooks/useTheme')
 }

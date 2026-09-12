@@ -47,6 +47,11 @@ export default defineConfig({
         target: 'https://codex-resets.com',
         changeOrigin: true,
         secure: true,
+        ws: true,
+        headers: {
+          Referer: 'https://codex-resets.com',
+          Origin: 'https://codex-resets.com',
+        },
       },
     },
   },

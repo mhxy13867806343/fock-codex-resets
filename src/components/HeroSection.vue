@@ -18,15 +18,83 @@ const naiveDialog = useDialog();
 const pushEnabled = ref(false);
 const showEmailForm = ref(false);
 const emailInput = ref('');
-const reactionCount = ref(45464);
 const bursts = ref<Array<{ id: number; x: number; y: number; emoji: string }>>([]);
 let burstId = 0;
 
 const STORAGE_KEY = 'codex_subscription_emails';
 const subscriptionHistory = ref<string[]>([]);
 
+const STORAGE_REACTION_KEY = 'codex_reaction_count';
+const reactionCount = ref<number | null>(null);
+
+let pendingReactionClicks = 0;
+let activeRequestId: string | null = null;
+let postTimeout: any = null;
+let reactionPollTimer: any = null;
+let ws: WebSocket | null = null;
+
 const now = ref(Date.now());
 let timer: any = null;
+
+const latestReset = computed(() => props.status?.data.latest_reset);
+
+// Dynamic thanks / beg mode matching codex-resets.com (within 24 hours of reset => thanks, else => beg)
+const isWithin24Hours = computed(() => {
+  if (!latestReset.value?.announced_at) return true;
+  const timeDiff = Date.now() - new Date(latestReset.value.announced_at).getTime();
+  return timeDiff < 86400000;
+});
+
+const reactionMode = computed(() => isWithin24Hours.value ? 'thanks' : 'beg');
+const reactionLabel = computed(() => isWithin24Hours.value ? 'thanks' : 'beg');
+const reactionTitle = computed(() => isWithin24Hours.value ? '为此次重置点赞感谢！(Say thanks for the reset)' : '祈求 Codex 额度重置！(Beg for a reset)');
+
+async function loadReactionCount() {
+  try {
+    const res = await fetch(withToken('/api/reset-requests'), {
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && typeof data.count === 'number') {
+        reactionCount.value = data.count;
+        localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to load reaction count from server:', err);
+  }
+}
+
+function initLiveWebSocket() {
+  if (typeof window === 'undefined' || typeof WebSocket === 'undefined') return;
+  try {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(`${protocol}//${window.location.host}/api/reset-requests/live`);
+    ws.addEventListener('message', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        if (data?.type === 'reset-request-count' && typeof data.count === 'number') {
+          reactionCount.value = data.count;
+          localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+        }
+      } catch {}
+    });
+    ws.addEventListener('close', () => {
+      ws = null;
+    });
+  } catch {}
+}
+
+const handleVisibility = () => {
+  if (!document.hidden) {
+    loadReactionCount();
+    if (!ws || ws.readyState === WebSocket.CLOSED) {
+      initLiveWebSocket();
+    }
+  }
+};
 
 onMounted(() => {
   timer = setInterval(() => {
@@ -37,10 +105,16 @@ onMounted(() => {
     pushEnabled.value = true;
   }
 
-  const savedCount = localStorage.getItem('codex_reaction_count');
+  const savedCount = localStorage.getItem(STORAGE_REACTION_KEY);
   if (savedCount) {
     reactionCount.value = parseInt(savedCount, 10);
   }
+
+  // Fetch real-time count from https://codex-resets.com/api/reset-requests
+  loadReactionCount();
+  reactionPollTimer = setInterval(loadReactionCount, 12000);
+  initLiveWebSocket();
+  document.addEventListener('visibilitychange', handleVisibility);
 
   try {
     const cached = localStorage.getItem(STORAGE_KEY);
@@ -57,9 +131,11 @@ onMounted(() => {
 
 onUnmounted(() => {
   if (timer) clearInterval(timer);
+  if (reactionPollTimer) clearInterval(reactionPollTimer);
+  if (postTimeout) clearTimeout(postTimeout);
+  if (ws) ws.close();
+  document.removeEventListener('visibilitychange', handleVisibility);
 });
-
-const latestReset = computed(() => props.status?.data.latest_reset);
 
 const relativeTime = computed(() => {
   if (!latestReset.value?.announced_at) return '计算中...';
@@ -218,20 +294,78 @@ function executeClearAll() {
 }
 
 function handleReaction() {
-  reactionCount.value += 1;
-  localStorage.setItem('codex_reaction_count', reactionCount.value.toString());
+  // Optimistic increment
+  if (reactionCount.value === null) {
+    reactionCount.value = 1;
+  } else {
+    reactionCount.value += 1;
+  }
+  localStorage.setItem(STORAGE_REACTION_KEY, reactionCount.value.toString());
 
-  const emojis = ['🙏', '⚡️', '🎉', '🔥', '🚀'];
-  const randEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+  // Particles matching codex-resets.com
+  const particles = reactionMode.value === 'thanks'
+    ? ['+1', '🙏', 'thx', '🧡', 'avatar', 'avatar']
+    : ['+1', '🙏', 'pls', '🔄', 'avatar', 'avatar'];
+  const rand = particles[Math.floor(Math.random() * particles.length)];
   const bId = ++burstId;
-  const x = (Math.random() - 0.5) * 60;
+  const x = (Math.random() - 0.5) * 70;
   const y = -20 - Math.random() * 40;
 
-  bursts.value.push({ id: bId, x, y, emoji: randEmoji });
+  bursts.value.push({ id: bId, x, y, emoji: rand });
 
   setTimeout(() => {
     bursts.value = bursts.value.filter(b => b.id !== bId);
   }, 900);
+
+  // Batch clicks & send POST /api/reset-requests
+  pendingReactionClicks += 1;
+  if (!activeRequestId) {
+    activeRequestId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  }
+
+  if (pendingReactionClicks >= 10) {
+    if (postTimeout) {
+      clearTimeout(postTimeout);
+      postTimeout = null;
+    }
+    sendReactionPost();
+  } else {
+    if (!postTimeout) {
+      postTimeout = setTimeout(sendReactionPost, 120);
+    }
+  }
+}
+
+async function sendReactionPost() {
+  postTimeout = null;
+  const n = pendingReactionClicks;
+  const reqId = activeRequestId;
+  pendingReactionClicks = 0;
+  activeRequestId = null;
+
+  if (n < 1 || !reqId) return;
+
+  try {
+    const res = await fetch(withToken('/api/reset-requests'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ request_id: reqId, n }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && typeof data.count === 'number') {
+        reactionCount.value = data.count;
+        localStorage.setItem(STORAGE_REACTION_KEY, String(data.count));
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to send reaction post:', err);
+  }
 }
 </script>
 
@@ -391,19 +525,19 @@ function handleReaction() {
           {{ relativeTime }}
         </div>
 
-        <!-- Thanks / Reaction Button -->
+        <!-- Thanks / Beg Reaction Button (Live synced with codex-resets.com) -->
         <div class="reaction-box">
           <button
             class="reaction-btn"
             @click="handleReaction"
-            title="为此次重置点赞感谢！"
+            :title="reactionTitle"
           >
             <span class="reaction-emoji">🙏</span>
-            <span class="reaction-text">thanks</span>
-            <span class="reaction-count mono">{{ reactionCount.toLocaleString() }}</span>
+            <span class="reaction-text">{{ reactionLabel }}</span>
+            <span class="reaction-count mono">{{ reactionCount !== null ? reactionCount.toLocaleString() : '...' }}</span>
           </button>
 
-          <!-- Floating Emoji Bursts -->
+          <!-- Floating Emoji & Avatar Bursts -->
           <div class="burst-container">
             <span
               v-for="burst in bursts"
@@ -411,7 +545,13 @@ function handleReaction() {
               class="burst-particle"
               :style="{ left: burst.x + 'px', top: burst.y + 'px' }"
             >
-              {{ burst.emoji }}
+              <img
+                v-if="burst.emoji === 'avatar'"
+                src="/thsottiaux-avatar.jpg"
+                alt=""
+                class="burst-avatar"
+              />
+              <span v-else>{{ burst.emoji }}</span>
             </span>
           </div>
         </div>
