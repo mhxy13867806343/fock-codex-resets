@@ -27,7 +27,9 @@
   --cell-size: 20px;
 }
 
-[data-theme='dark'] {
+[data-theme='dark'],
+.dark,
+body.dark {
   color-scheme: dark;
   --paper: #17130f;
   --ink: #f4ede4;

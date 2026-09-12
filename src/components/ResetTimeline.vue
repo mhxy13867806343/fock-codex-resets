@@ -265,5 +265,22 @@ function formatAbsolute(dateStr: string) {
         加载更多记录 (剩余 {{ filteredResets.length - visibleCount }} 条) ↓
       </button>
     </div>
+
+    <!-- No More Data / Bottom Line ("已加载完数据了，我是有底线的。") -->
+    <div v-else-if="filteredResets.length > 0" class="timeline-bottom-line">
+      <!-- PC: Naive UI Divider -->
+      <n-divider v-if="!isMobile" dashed>
+        <span class="bottom-line-content">
+          <span class="bottom-line-icon">⚡️</span> 已加载完数据了，我是有底线的。
+        </span>
+      </n-divider>
+
+      <!-- H5: Vant Divider -->
+      <van-divider v-else dashed>
+        <span class="bottom-line-content">
+          <span class="bottom-line-icon">⚡️</span> 已加载完数据了，我是有底线的。
+        </span>
+      </van-divider>
+    </div>
   </section>
 </template>

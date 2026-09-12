@@ -234,3 +234,24 @@
   color: var(--ink-3);
   font-style: italic;
 }
+
+.timeline-bottom-line {
+  margin: 36px 0 20px;
+  padding: 0 10px;
+}
+
+.bottom-line-content {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.5px;
+}
+
+.bottom-line-icon {
+  font-size: 14px;
+}
+

@@ -65,9 +65,9 @@ onUnmounted(() => {
     <div class="update-notify-bar">
       <div class="update-bar-left">
         <span>
-          当前环境: <strong>{{ isMobile ? '📱 移动端 (Vant UI 驱动)' : '🖥 桌面端 (Naive UI 驱动)' }}</strong>
+          当前环境: <strong>{{ isMobile ? '📱 移动端' : '🖥 桌面端 (Naive UI 驱动)' }}</strong>
         </span>
-        <div class="device-switcher-group" title="切换模拟环境以测试对应组件库">
+        <div  @click="triggerRefreshPrompt" class="device-switcher-group" title="切换模拟环境以测试对应组件库">
           <button
             class="device-mode-btn"
             :class="{ active: manualMode === 'auto' }"
@@ -75,27 +75,7 @@ onUnmounted(() => {
           >
             自动检测
           </button>
-          <button
-            class="device-mode-btn"
-            :class="{ active: manualMode === 'pc' }"
-            @click="setDeviceMode('pc')"
-          >
-            🖥 PC (Naive UI)
-          </button>
-          <button
-            class="device-mode-btn"
-            :class="{ active: manualMode === 'h5' }"
-            @click="setDeviceMode('h5')"
-          >
-            📱 H5 (Vant)
-          </button>
         </div>
-      </div>
-
-      <div class="update-bar-right">
-        <button class="update-btn" @click="triggerRefreshPrompt">
-          提示使用 {{ isMobile ? 'Vant' : 'Naive UI' }} 刷新
-        </button>
       </div>
     </div>
 

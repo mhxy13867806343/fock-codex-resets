@@ -17,7 +17,7 @@ export function useNotifier() {
       // 📱 H5 移动端：使用 Vant 提示与刷新
       showVantDialog({
         title: 'Vant 移动端刷新提示',
-        message: '检测到页面数据有更新，提示使用 Vant 移动端组件库进行刷新。',
+        message: '检测到页面数据有更新，提示使用 移动端组件库进行刷新。',
         showCancelButton: true,
         confirmButtonText: '使用 Vant 刷新',
         cancelButtonText: '取消',
@@ -38,7 +38,7 @@ export function useNotifier() {
       naiveDialog?.info({
         title: 'Naive UI 桌面端刷新提示',
         content: '检测到页面数据有更新，提示使用 Naive UI 桌面端组件库进行刷新。',
-        positiveText: '使用 Naive UI 刷新',
+        positiveText: '使用 pc刷新',
         negativeText: '取消',
         onPositiveClick: async () => {
           try {
