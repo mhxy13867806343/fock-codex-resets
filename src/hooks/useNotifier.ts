@@ -16,19 +16,19 @@ export function useNotifier() {
     if (isMobile.value) {
       // 📱 H5 移动端：使用 Vant 提示与刷新
       showVantDialog({
-        title: 'Vant 移动端刷新提示',
-        message: '检测到页面数据有更新，提示使用 移动端组件库进行刷新。',
+        title: '刷新提示',
+        message: '检测到页面数据有更新',
         showCancelButton: true,
-        confirmButtonText: '使用 Vant 刷新',
+        confirmButtonText: '刷新',
         cancelButtonText: '取消',
         confirmButtonColor: '#ff5c2b',
       }).then(async () => {
-        showToast({ type: 'loading', message: 'Vant 正在刷新数据...', duration: 0 });
+        showToast({ type: 'loading', message: '正在刷新数据...', duration: 0 });
         try {
           await onConfirm();
-          showToast({ type: 'success', message: '已使用 Vant 移动端组件库完成刷新', icon: 'passed' });
+          showToast({ type: 'success', message: '完成刷新', icon: 'passed' });
         } catch {
-          showToast({ type: 'fail', message: 'Vant 刷新失败，请稍后重试' });
+          showToast({ type: 'fail', message: '刷新失败，请稍后重试' });
         }
       }).catch(() => {
         // 用户取消
@@ -36,21 +36,21 @@ export function useNotifier() {
     } else {
       // 🖥 桌面 PC 端：使用 Naive UI 提示与刷新
       naiveDialog?.info({
-        title: 'Naive UI 桌面端刷新提示',
-        content: '检测到页面数据有更新，提示使用 Naive UI 桌面端组件库进行刷新。',
-        positiveText: '使用 pc刷新',
+        title: '刷新提示',
+        content: '检测到页面数据有更新，',
+        positiveText: '刷新',
         negativeText: '取消',
         onPositiveClick: async () => {
           try {
             await onConfirm();
             naiveNotification?.success({
-              title: 'Naive UI 刷新成功',
-              content: '已使用 Naive UI 桌面端组件库成功获取最新 Codex 额度重置数据！',
+              title: '刷新成功',
+              content: '获取最新 Codex 额度重置数据！',
               duration: 3000,
             });
-            naiveMessage?.success('已使用 Naive UI 桌面端组件库完成刷新');
+            naiveMessage?.success('完成刷新');
           } catch {
-            naiveMessage?.error('Naive UI 刷新失败，请检查网络连接');
+            naiveMessage?.error('请检查网络连接');
           }
         },
       });

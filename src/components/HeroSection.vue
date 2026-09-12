@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { showConfirmDialog, showToast } from 'vant';
 import type { StatusResponse } from '../types';
 
 const props = defineProps<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 const { isMobile } = useDevice();
 const { withToken } = useToken();
 const message = useMessage();
+const naiveDialog = useDialog();
 
 const pushEnabled = ref(false);
 const showEmailForm = ref(false);
@@ -19,6 +21,9 @@ const emailInput = ref('');
 const reactionCount = ref(45464);
 const bursts = ref<Array<{ id: number; x: number; y: number; emoji: string }>>([]);
 let burstId = 0;
+
+const STORAGE_KEY = 'codex_subscription_emails';
+const subscriptionHistory = ref<string[]>([]);
 
 const now = ref(Date.now());
 let timer: any = null;
@@ -35,6 +40,18 @@ onMounted(() => {
   const savedCount = localStorage.getItem('codex_reaction_count');
   if (savedCount) {
     reactionCount.value = parseInt(savedCount, 10);
+  }
+
+  try {
+    const cached = localStorage.getItem(STORAGE_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed)) {
+        subscriptionHistory.value = parsed.slice(0, 15);
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load subscription history:', e);
   }
 });
 
@@ -79,13 +96,125 @@ async function togglePush() {
 }
 
 function handleSubscribeEmail() {
-  if (!emailInput.value || !emailInput.value.includes('@')) {
-    message?.error('请输入有效的邮箱地址');
+  const trimmed = emailInput.value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!trimmed || !emailRegex.test(trimmed)) {
+    if (isMobile.value) {
+      showToast('请输入有效的邮箱地址');
+    } else {
+      message?.error('请输入有效的邮箱地址');
+    }
     return;
   }
-  message?.success(`订阅成功！已记录: ${emailInput.value}`);
+
+  // Prepend to history, deduplicate, limit to 15
+  const updated = [trimmed, ...subscriptionHistory.value.filter(item => item !== trimmed)].slice(0, 15);
+  subscriptionHistory.value = updated;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error('Failed to save subscription history:', e);
+  }
+
+  if (isMobile.value) {
+    showToast('订阅成功！已保存到历史记录');
+  } else {
+    message?.success(`订阅成功！已保存到历史记录: ${trimmed}`);
+  }
   emailInput.value = '';
-  showEmailForm.value = false;
+}
+
+function handlePickHistoryEmail(email: string) {
+  emailInput.value = email;
+  if (isMobile.value) {
+    showToast('已填入该邮箱');
+  } else {
+    message?.info(`已填入邮箱: ${email}`);
+  }
+}
+
+function confirmDeleteSingle(email: string) {
+  if (isMobile.value) {
+    showConfirmDialog({
+      title: '确认清除',
+      message: `确定要清除该历史订阅邮箱吗？\n${email}`,
+      confirmButtonText: '确认清除',
+      cancelButtonText: '取消',
+      confirmButtonColor: '#ff5c2b',
+    })
+      .then(() => {
+        executeDeleteSingle(email);
+      })
+      .catch(() => {
+        // user cancelled
+      });
+  } else {
+    naiveDialog?.warning({
+      title: '确认清除',
+      content: `确定要清除历史订阅邮箱「${email}」吗？`,
+      positiveText: '确认清除',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        executeDeleteSingle(email);
+      },
+    });
+  }
+}
+
+function executeDeleteSingle(email: string) {
+  subscriptionHistory.value = subscriptionHistory.value.filter(item => item !== email);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(subscriptionHistory.value));
+  } catch (e) {
+    console.error('Failed to update subscription history:', e);
+  }
+  if (isMobile.value) {
+    showToast('已清除该历史邮箱');
+  } else {
+    message?.success('已清除该历史邮箱');
+  }
+}
+
+function confirmClearAll() {
+  if (isMobile.value) {
+    showConfirmDialog({
+      title: '确认全部清空',
+      message: '确定要清除所有历史订阅邮箱记录吗？\n清除后不可恢复。',
+      confirmButtonText: '全部清除',
+      cancelButtonText: '取消',
+      confirmButtonColor: '#ff5c2b',
+    })
+      .then(() => {
+        executeClearAll();
+      })
+      .catch(() => {
+        // user cancelled
+      });
+  } else {
+    naiveDialog?.warning({
+      title: '确认全部清空',
+      content: '确定要清除所有历史订阅邮箱记录吗？清除后不可恢复。',
+      positiveText: '全部清除',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        executeClearAll();
+      },
+    });
+  }
+}
+
+function executeClearAll() {
+  subscriptionHistory.value = [];
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error('Failed to clear subscription history:', e);
+  }
+  if (isMobile.value) {
+    showToast('已清空全部历史邮箱');
+  } else {
+    message?.success('已清空全部历史邮箱');
+  }
 }
 
 function handleReaction() {
@@ -169,6 +298,7 @@ function handleReaction() {
           round
           clearable
           style="max-width: 320px;"
+          @keydown.enter="handleSubscribeEmail"
         />
         <n-button type="primary" round @click="handleSubscribeEmail">
           立即订阅
@@ -183,6 +313,7 @@ function handleReaction() {
             center
             clearable
             placeholder="输入邮箱地址"
+            @keydown.enter="handleSubscribeEmail"
           >
             <template #button>
               <van-button size="small" type="primary" round @click="handleSubscribeEmail">
@@ -191,6 +322,52 @@ function handleReaction() {
             </template>
           </van-field>
         </van-cell-group>
+      </div>
+
+      <!-- Subscription Email History List (Max 15, Cached) -->
+      <div v-if="subscriptionHistory.length > 0" class="email-history-container">
+        <div class="email-history-header">
+          <div class="history-title">
+            <span class="history-icon">🕒</span>
+            <span>历史订阅邮箱</span>
+            <span class="history-badge">{{ subscriptionHistory.length }}/15</span>
+          </div>
+          <button
+            type="button"
+            class="history-clear-all-btn"
+            @click="confirmClearAll"
+            title="清空全部历史邮箱"
+          >
+            <span class="clear-icon">🗑️</span>
+            <span>清空全部</span>
+          </button>
+        </div>
+
+        <div class="email-history-list">
+          <div
+            v-for="email in subscriptionHistory"
+            :key="email"
+            class="email-history-chip"
+          >
+            <span
+              class="chip-email-text"
+              @click="handlePickHistoryEmail(email)"
+              :title="`点击填入: ${email}`"
+            >
+              <span class="chip-mail-icon">✉️</span>
+              <span class="chip-text">{{ email }}</span>
+            </span>
+            <button
+              type="button"
+              class="chip-delete-btn"
+              @click.stop="confirmDeleteSingle(email)"
+              :title="`删除 ${email}`"
+              aria-label="删除此邮箱"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 

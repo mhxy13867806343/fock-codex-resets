@@ -66,32 +66,6 @@ onUnmounted(() => {
     <div class="update-notify-bar">
       <div class="update-bar-left">
         <!-- Device Info & Switcher -->
-        <div class="notify-badge-item">
-          <span>视口: <strong>{{ isMobile ? '📱 移动端 (Vant)' : '🖥 桌面端 (Naive UI)' }}</strong></span>
-          <div class="device-switcher-group" title="切换设备视口模拟">
-            <button
-              class="device-mode-btn"
-              :class="{ active: manualMode === 'auto' }"
-              @click="setDeviceMode('auto')"
-            >
-              自动
-            </button>
-            <button
-              class="device-mode-btn"
-              :class="{ active: manualMode === 'pc' }"
-              @click="setDeviceMode('pc')"
-            >
-              PC
-            </button>
-            <button
-              class="device-mode-btn"
-              :class="{ active: manualMode === 'h5' }"
-              @click="setDeviceMode('h5')"
-            >
-              H5
-            </button>
-          </div>
-        </div>
 
         <!-- Theme Info & Switcher -->
         <div class="notify-badge-item">
@@ -120,12 +94,6 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="update-bar-right">
-        <button class="update-btn" @click="triggerRefreshPrompt">
-          提示使用 {{ isMobile ? 'Vant' : 'Naive UI' }} 刷新
-        </button>
       </div>
     </div>
 

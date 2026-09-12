@@ -73,6 +73,173 @@
   align-items: center;
 }
 
+.email-form-h5 .van-cell-group--inset {
+  margin: 0;
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  background: var(--card);
+}
+
+/* Subscription Email History Box */
+.email-history-container {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--card);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  max-width: 620px;
+}
+
+.email-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.history-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.history-icon {
+  font-size: 14px;
+}
+
+.history-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  border: 1px solid var(--border-color);
+  color: var(--ink-2);
+}
+
+.history-clear-all-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  background: var(--paper);
+  color: var(--ink-2);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.history-clear-all-btn:hover {
+  background: #ffe3e3;
+  color: #c92a2a;
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.dark .history-clear-all-btn:hover {
+  background: #4c1d1d;
+  color: #ff8787;
+}
+
+.history-clear-all-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0.5px 0.5px 0 var(--ink);
+}
+
+.email-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.email-history-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  transition: all 0.15s ease;
+  max-width: 100%;
+}
+
+.email-history-chip:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--ink);
+  background: var(--paper-2);
+}
+
+.chip-email-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.chip-email-text:hover {
+  color: var(--accent);
+}
+
+.chip-mail-icon {
+  font-size: 11px;
+}
+
+.chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chip-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--ink-3);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 3px;
+  line-height: 1;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.chip-delete-btn:hover {
+  color: #e03131;
+  background: rgba(224, 49, 49, 0.15);
+  transform: scale(1.2);
+}
+
+.chip-delete-btn:active {
+  transform: scale(0.95);
+}
+
 .watch-alert {
   border: var(--border);
   background: var(--sun);
